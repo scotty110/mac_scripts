@@ -40,7 +40,6 @@ decrypt_folder() {
     mkdir -p $DECRYPT_LOC #Make tmp location
 
     #Decrypt
-    #$gpg_d $FULL_PATH | tar -x -C $DECRYPT_LOC
     $gpg_d $FULL_PATH | zstd -d -T0 - | tar -xC $DECRYPT_LOC
 
     # Now create Desktop system link to view

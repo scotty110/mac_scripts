@@ -23,7 +23,6 @@ EOF
 encrypt_folder() {
     # Encrypt Folder (and possible save over)
     local FOLDER=${1:-$(</dev/stdin)} # /path/to/earchive.tar.gpg
-    #local AGE_TYPE=${2:-$(</dev/stdin)}
     local FILE="$FOLDER.tar.age"
 
     local AGE_E
@@ -34,7 +33,6 @@ encrypt_folder() {
     fi
 
     # Now Encrypt opened folder
-    #tar --xz -cC $FOLDER . | $AGE_E > $FILE
     tar -cC $FOLDER . | zstd -z -19 -T0 - | $AGE_E > $FILE
 }
 
@@ -58,7 +56,6 @@ parse_params() {
 
     # Parse file
     FULL_PATH="${@:$#}" #This is the input for stuff
-    #FILE=$(get_file_name $FULL_PATH)
 
     # Encrypt Folder
     encrypt_folder $FULL_PATH #$AGE_SYMMETRIC
@@ -74,5 +71,3 @@ else
 fi
 
 exit
-
-#age -e -R ~/.age/scott_key.pub ./test.txt > ./text.txt.age

@@ -7,6 +7,7 @@
 
 set -eu
 export LC_CTYPE=C
+# Generate a 256 bit password
 (tr -c -d '[:graph:]' < /dev/urandom | head -c34) | pbcopy
 exit
 

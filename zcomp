@@ -21,9 +21,7 @@ fi
 directory_name=$(basename "$directory")
 
 # Create the archive without directory structure
-#tar -cC "$directory" . | lz4 - > "${directory_name}.tar.lz4" 
 tar -cC "$directory" . | zstd -z -19 -T0 - > "${directory_name}.tar.zst"
-
 
 
 exit

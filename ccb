@@ -1,0 +1,8 @@
+#!/bin/bash
+# Clear Clip Board
+
+set -eu
+
+pbcopy < /dev/null
+
+exit

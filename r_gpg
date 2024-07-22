@@ -1,0 +1,4 @@
+#!/bin/bash
+# Just need to restart sometimes
+gpgconf --kill gpg-agent
+killall gpg-agent

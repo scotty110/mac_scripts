@@ -1,0 +1,12 @@
+#!/bin/bash
+# https://en.wikipedia.org/wiki/Password_strength#NIST_Special_Publication_800-63
+# Provides approx 256 bits of security (https://en.wikipedia.org/wiki/Password_strength)
+
+# Generate a 128 bit password
+#(tr -c -d '[:alnum:]' < /dev/urandom | head -c22) | pbcopy
+
+set -eu
+export LC_CTYPE=C
+(tr -c -d '[:graph:]' < /dev/urandom | head -c34) | pbcopy
+exit
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <file.tar.zst>"
+    exit 1
+fi
+
+compressed_file="$1"
+directory_name="${compressed_file%.tar.zst}"
+
+# Create the target directory
+mkdir -p "$directory_name"
+
+# Decompress the Zstandard compressed file and extract the contents
+zstd -d -c -T0 "$compressed_file" | tar -xC "$directory_name"
+
+echo "Decompression completed. Contents are in: $directory_name"

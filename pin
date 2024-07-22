@@ -1,0 +1,12 @@
+#!/bin/bash
+#Generate 8 digit pin
+
+set -eu
+
+export LC_CTYPE=C
+(tr -c -d '[:digit:]' < /dev/urandom | head -c6 ) | pbcopy
+#tr -cd '[:digit:]' < /dev/urandom | head -c6 
+
+exit
+
+

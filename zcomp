@@ -1,0 +1,29 @@
+#!/bin/bash
+# Tar up file using compression
+
+set -eu
+
+# Check if a directory is provided as an argument
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 directory_name"
+    exit 1
+fi
+
+directory="$1"
+
+# Check if the provided argument is a directory
+if [ ! -d "$directory" ]; then
+    echo "Error: $directory is not a directory."
+    exit 1
+fi
+
+# Extract directory name from the provided path
+directory_name=$(basename "$directory")
+
+# Create the archive without directory structure
+#tar -cC "$directory" . | lz4 - > "${directory_name}.tar.lz4" 
+tar -cC "$directory" . | zstd -z -19 -T0 - > "${directory_name}.tar.zst"
+
+
+
+exit

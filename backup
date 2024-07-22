@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -eu
+
+TMP_DIR=/tmp/tmp_backup
+mkdir $TMP_DIR
+
+# Backup .age
+tar -cf $TMP_DIR/age.tar -C $HOME .age
+
+# Backup .password-store
+tar -cf $TMP_DIR/password-store.tar -C $HOME .password-store
+
+# Backup .gpg_stubs
+tar -cf $TMP_DIR/gpg.tar -C $HOME .gpg_stubs
+
+# Backup crc
+cp $HOME/.crc $TMP_DIR
+
+# Encrypt
+printf "GPG Encrypt\n"
+XZ_OPT=-e9 tar -cJC $TMP_DIR . | gpg -c -o $HOME/Desktop/private.tar.gpg
+
+#printf "AGE Encrypt\n"
+#XZ_OPT=-e9 tar -cJC $TMP_DIR . | age -e -p > $HOME/Desktop/private.tar.age
+
+rm -rf $TMP_DIR

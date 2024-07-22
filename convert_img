@@ -1,0 +1,21 @@
+#!/bin/bash
+# Check if a file name is provided
+if [ -z "$1" ]; then
+    echo "No file specified."
+    exit 1
+fi
+
+file="$1"
+
+# Check if the file exists
+if [ ! -f "$file" ]; then
+    echo "File not found: $file"
+    exit 1
+fi
+
+# Convert the file to HEIC format
+sips -s format heic "$file" --out "${file%.*}.heic"
+
+# Copy EXIF data to the new file
+exiftool -tagsFromFile "$file" -all:all "${file%.*}.heic"
+rm "${file%.*}.heic_original"

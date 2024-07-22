@@ -1,0 +1,36 @@
+#!/bin/bash
+set -eu
+
+TMP_DIR=/tmp/tmp_ubackup
+PRIVATE_FILE=$HOME/Desktop/private.tar.gpg
+
+# Decomp to TMP_DIR
+mkdir $TMP_DIR
+gpg --decrypt --quiet --no-greeting --pinentry-mode=loopback $PRIVATE_FILE | tar -xJC $TMP_DIR
+
+# Decomp Age
+AGE_HOME=$HOME/.age 
+if [ -d "$AGE_HOME" ]; then
+    rm -rf $AGE_HOME
+fi
+tar -xf $TMP_DIR/age.tar -C $HOME 
+
+# Decomp password-store 
+PW_HOME="$HOME/.password-store"
+if [ -d "$PW_HOME" ]; then
+    rm -rf $PW_HOME
+fi
+tar -xf $TMP_DIR/password-store.tar -C $HOME
+
+# Decomp GPG 
+GPG_HOME=$HOME/.gpg_stubs
+if [ -d "$GPG_HOME" ]; then
+    rm -rf $GPG_HOME
+fi
+tar -xf $TMP_DIR/gpg.tar -C $HOME
+sh $GPG_HOME/import.sh
+
+# Move crc
+mv $TMP_DIR/.crc $HOME/.crc
+
+rm -rf $TMP_DIR

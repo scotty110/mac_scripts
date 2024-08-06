@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -eu
+
+# Check if URL is provided as a command line argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <URL>"
+  exit 1
+fi
+
+# URL to get
+URL="$1"
+
+# Get the current working directory
+CURRENT_DIR=$(pwd)
+
+# File name based on URL hash
+HASH=$(echo -n "$URL" | openssl dgst -sha256 | awk '{print $2}')
+INTERMEDIATE_FILE="/tmp/intermediate.mp4"
+FINAL_FILE="$CURRENT_DIR/$HASH.mp4"
+
+# Download video
+yt-dlp -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4' -o "$INTERMEDIATE_FILE" "$URL"
+
+# Encode using ffmpeg
+ffmpeg -i "$INTERMEDIATE_FILE" -c:v hevc_videotoolbox -q:v 63 -tag:v hvc1 -c:a aac "$FINAL_FILE"
+#ffmpeg -i "$INTERMEDIATE_FILE" -c:v h264_videotoolbox -b:v 5000k -c:a aac "$FINAL_FILE"
+
+# Optional: remove the intermediate file if you no longer need it
+rm "$INTERMEDIATE_FILE"

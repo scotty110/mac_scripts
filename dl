@@ -19,12 +19,23 @@ HASH=$(echo -n "$URL" | openssl dgst -sha256 | awk '{print $2}')
 INTERMEDIATE_FILE="/tmp/intermediate.mp4"
 FINAL_FILE="$CURRENT_DIR/$HASH.mp4"
 
-# Download video
-yt-dlp -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4' -o "$INTERMEDIATE_FILE" "$URL"
+# Download video with audio - using a more reliable format specification
+echo "Downloading from $URL..."
+yt-dlp -f "bv*+ba/b" --cookies-from-browser chrome -o "$INTERMEDIATE_FILE" "$URL"
+
+# Verify that the downloaded file has audio
+if ffprobe -i "$INTERMEDIATE_FILE" -show_streams -select_streams a -loglevel error 2>&1 | grep -q codec_type=audio; then
+  echo "Audio stream detected in downloaded file"
+else
+  echo "Warning: No audio detected in downloaded file!"
+fi
 
 # Encode using ffmpeg
-ffmpeg -i "$INTERMEDIATE_FILE" -c:v hevc_videotoolbox -q:v 70 -tag:v hvc1 -c:a aac "$FINAL_FILE"
+echo "Encoding with ffmpeg..."
+ffmpeg -i "$INTERMEDIATE_FILE" -c:v hevc_videotoolbox -q:v 60 -tag:v hvc1 -c:a aac "$FINAL_FILE"
 #ffmpeg -i "$INTERMEDIATE_FILE" -c:v h264_videotoolbox -b:v 5000k -c:a aac "$FINAL_FILE"
 
 # Optional: remove the intermediate file if you no longer need it
 rm "$INTERMEDIATE_FILE"
+
+echo "Done! File saved as: $FINAL_FILE"
